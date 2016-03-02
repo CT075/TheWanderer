@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="414.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="22.0" prefWidth="393.0" text="Use the arrow keys to collect cookies and explore" />
+      <Label layoutX="14.0" layoutY="36.0" prefHeight="22.0" prefWidth="393.0" text="the world! Watch out, though, because there are" />
+      <Label layoutX="14.0" layoutY="58.0" prefHeight="22.0" prefWidth="393.0" text="nasty boy scouts out to ruin your day! Walk into" />
+      <Label layoutX="14.0" layoutY="80.0" prefHeight="22.0" prefWidth="393.0" text="them to offer them cookies and scare them off!" />
+      <Label layoutX="14.0" layoutY="130.0" prefHeight="29.0" prefWidth="393.0" text="You can pick up things from the ground to get more" />
+      <Label layoutX="14.0" layoutY="159.0" prefHeight="22.0" prefWidth="393.0" text="cookie recipes (which means you get more cookies)" />
+      <Label layoutX="14.0" layoutY="190.0" prefHeight="22.0" prefWidth="393.0" text="or be more scary!" />
+   </children>
+</AnchorPane>
