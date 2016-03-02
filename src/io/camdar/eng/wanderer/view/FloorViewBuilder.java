@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import io.camdar.eng.wanderer.model.nav.Floor;
 import io.camdar.eng.wanderer.model.nav.Tile;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.embed.swing.SwingFXUtils;
@@ -48,8 +49,11 @@ public class FloorViewBuilder extends ImageView {
         g.clearRect(0, 0, result.getWidth(), result.getHeight());
         for (int i = 0 ; i < f.getHeight() ; i++) {
             for (int j = 0 ; j < f.getWidth() ; j++) {
+                BufferedImage img = getImage(
+                        f.getTile(i, j).getID(), tileImages
+                );
                 g.drawImage(
-                        tileImages[f.getTile(i, j).getID()], null,
+                        img, null,
                         (i+ViewConstants.TOP_LEFT_BLANKS)
                             * ViewConstants.TILE_DIMENSIONS,
                         (j+ViewConstants.BOT_RIGHT_BLANKS)
@@ -58,5 +62,10 @@ public class FloorViewBuilder extends ImageView {
             }
         }
         return SwingFXUtils.toFXImage(result, null);
+    }
+    
+    public static BufferedImage getImage(int id, BufferedImage[] slc) {
+        if (id == 0) return slc[0];
+        return slc[(int)(Math.random()*(slc.length-1)+1)];
     }
 }

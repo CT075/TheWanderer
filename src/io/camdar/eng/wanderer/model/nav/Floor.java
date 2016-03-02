@@ -161,24 +161,13 @@ public class Floor {
         // room the shop spawns in, and which room the exit
         // spawns in.
         Room playerRoom;
-        Room shopRoom;
-        Room exitRoom;
-        
         int spawnX;
         int spawnY;
         
         // Chooses a room for the Player to spawn in.
         playerRoom = roomsOnFloor.get((int) (Math.random() * roomsOnFloor.size()));
+
         
-        // Chooses a room for the shop to spawn in.
-        do {
-            shopRoom = roomsOnFloor.get((int) (Math.random() * roomsOnFloor.size()));
-        } while (shopRoom == playerRoom);
-        
-        // Chooses a room for the exit to spawn in.
-        do {
-            exitRoom = roomsOnFloor.get((int) (Math.random() * roomsOnFloor.size()));
-        } while (exitRoom == playerRoom || exitRoom == shopRoom);
         
         // Spawns the player in the specified room.
         spawnX = playerRoom.getTLTX() + 
@@ -190,22 +179,6 @@ public class Floor {
         units[spawnY][spawnX] = GameEntity.player;
         GameEntity.player.setXLoc(spawnX);
         GameEntity.player.setYLoc(spawnY);
-        
-        // Spawns the exit in the specified room.
-        spawnX = exitRoom.getTLTX() + 
-                ((int) (Math.random() * exitRoom.getWidth()));
-        spawnY = exitRoom.getTLTY() +
-                ((int) (Math.random() * exitRoom.getHeight()));
-        
-        // Places the exit.
-        floorTiles[spawnY][spawnX] = EXIT;
-        
-        // Spawns the shop in the specified room.
-        spawnX = (shopRoom.getTLTX() + shopRoom.getTRTX()) / 2;
-        spawnY = shopRoom.getTLTY();
-        
-        // Places the shop.
-        floorTiles[spawnY][spawnX] = SHOP;
     }
     
     // Determines which room the given coordinates are in. 

@@ -13,10 +13,10 @@ public class KeyController {
         // turns the input into usable int
         switch (e.getCode()) {
         case DOWN:
-            owner.update(1);
+            owner.update(3);
             break;
         case UP:
-            owner.update(3);
+            owner.update(1);
             break;
         case LEFT:
             owner.update(4);

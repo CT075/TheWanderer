@@ -40,7 +40,7 @@ public abstract class GameEntity {
 
     // Adds an item to a LivingGameEntity's inventory, or allows space to be
     // shared with another item.
-    public abstract boolean addItem(Item item);
+    public abstract boolean addItem(int item);
     
     // Calls on the GameEntity to move.
     public abstract void update();

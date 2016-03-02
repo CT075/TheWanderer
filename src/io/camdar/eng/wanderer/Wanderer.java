@@ -1,31 +1,27 @@
 package io.camdar.eng.wanderer;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ListView;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 import javafx.util.Duration;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+
 import io.camdar.eng.wanderer.control.KeyController;
-import io.camdar.eng.wanderer.items.Item;
 import io.camdar.eng.wanderer.model.Game;
 import io.camdar.eng.wanderer.view.GameViewer;
-import io.camdar.eng.wanderer.view.ShopViewer;
 
 // The "master" class - exists outside of MVC. Coordinates the three and handles
 // file IO for the various FXML (view) files.
@@ -77,117 +73,6 @@ public class Wanderer extends Application {
             System.exit(-1);
         }
     }
-    
-    // Sets up the inventory display that shows everything you're holding.
-    public void displayInventory(List<Item> items) {
-        // This is where java's supposed new "functional programming" stuff gets
-        // pretty nasty. This entire block of code is essentially map();
-        Stream<String> strings = items.stream().map(
-                i -> String.format(
-                        "%s\t\t%s",
-                        i.getItemID(), i.getDescription()
-                )
-        );
-        // This is because JFX requires you to use their own janky list format
-        // to get listview to display them properly.
-        ObservableList<String> ol = FXCollections.observableList(
-                strings.collect(Collectors.toList())
-        );
-        ListView<String> lv = new ListView<>(ol);
-        try {
-            FXMLLoader loader = new FXMLLoader(Wanderer.class.getResource(
-                    "view/InventoryFrame.fxml"
-            ));
-            BorderPane dialog = loader.load();
-            dialog.setCenter(lv);
-            Stage s = new Stage();
-            s.setTitle("Inventory");
-            s.initModality(Modality.WINDOW_MODAL);
-            s.initOwner(primaryStage);
-            s.setScene(new Scene(dialog));
-            s.showAndWait();
-        }
-        catch(IOException e) {
-            System.err.println("Unable to load inventory display. Skipping.");
-            return;
-        }
-    }
-    
-    // Display the control dialog
-    public void displayControls() {
-        try {
-            FXMLLoader loader = new FXMLLoader(Wanderer.class.getResource(
-                    "view/ControlsDialog.fxml"
-            ));
-            AnchorPane dialog = loader.load();
-            Stage s = new Stage();
-            s.setTitle("Controls");
-            s.initModality(Modality.WINDOW_MODAL);
-            s.initOwner(primaryStage);
-            s.setScene(new Scene(dialog));
-            s.showAndWait();
-        }
-        catch(IOException e) {
-            System.err.println("Unable to load controls display. Skipping.");
-            return;
-        }
-    }
-    
-    // Create and display the minimap dialog.
-    public void displayMinimap(ImageView map) {
-        // This block of code basically just takes the map image that our
-        // GameViewer instance uses, shrinks it, and uses it as a minimap.
-        Image mapImage = map.getImage();
-        ImageView minimapView = new ImageView(mapImage);
-        minimapView.setPreserveRatio(true);
-        minimapView.setFitWidth(300);
-        try {
-            FXMLLoader loader = new FXMLLoader(Wanderer.class.getResource(
-                    "view/MinimapDialog.fxml"
-            ));
-            BorderPane dialog = loader.load();
-            ScrollPane sp = new ScrollPane();
-            sp.setContent(minimapView);
-            dialog.setCenter(sp);
-            Stage s = new Stage();
-            s.setTitle("Map");
-            s.initModality(Modality.WINDOW_MODAL);
-            s.initOwner(primaryStage);
-            s.setScene(new Scene(dialog));
-            s.showAndWait();
-        }
-        catch(IOException e) {
-            System.err.println("Unable to load minimap display. Skipping.");
-            return;
-        }
-    }
-    
-    // Display the shop dialog.
-    public void displayShop(){
-        try {
-            // Load layout from fxml file.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Wanderer.class.getResource(
-                    "view/ShopFrame.fxml"
-            ));
-            AnchorPane shopLayout = (AnchorPane) loader.load();
-            
-            ShopViewer v = loader.getController();
-            v.setOwner(state);
-            v.setRunner(this);
-
-            // Show the scene containing the shop layout.
-            Scene scene = new Scene(shopLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-            v.refresh();
-        } catch (IOException e) {
-            System.err.println("Unable to load shop screen. Aborting.");
-            System.exit(-8);
-        }
-
-    }
-    
 
     // Loads and initializes the "container" - the "meat" of the scene. Places
     // the container in the middle of the BorderPane and attaches relevant
@@ -206,15 +91,16 @@ public class Wanderer extends Application {
             // "ctrlr::handleKeyInput" is a "method object"; this line is
             // essentially equivalent to (e) -> { ctrlr.handleKeyInput(); }.
             layoutRoot.setOnKeyPressed(ctrlr::handleKeyInput);
+            layoutRoot.requestFocus();
             
             // Setup the timeline that handles animation (etc)
             // Cam: I have a super major fundamental disagreement with putting
             // the timeline the model, so I'd rather put the timeline outside
             // of the MVC architecture altogether. The update() method just
             // calls the respective update() methods of all sprites onscreen.
-            tl = new Timeline(new KeyFrame(
-                    Duration.millis(150), (e) -> { this.refresh(); }
-            ));
+            tl = new Timeline(new KeyFrame(Duration.millis(150), (e) -> {
+                    this.refresh();
+            }));
             tl.setCycleCount(Timeline.INDEFINITE);
             tl.play();
             // Now that we're all set up, we can show our window.
@@ -228,6 +114,36 @@ public class Wanderer extends Application {
             System.err.println("Unable to load game layout. Aborting");
             e.printStackTrace();
             System.exit(-1);
+        }
+    }
+    
+    public void displayItemDesc(String desc, String title) {
+        Label lb = new Label(desc);
+        lb.setWrapText(true);
+        lb.setPrefHeight(235);
+        lb.setPrefWidth(310);
+        lb.setFont(Font.font("Consolas", 20));
+        lb.setContentDisplay(ContentDisplay.TOP);
+        lb.setTextAlignment(TextAlignment.LEFT);
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(lb);
+        try {
+            FXMLLoader loader = new FXMLLoader(Wanderer.class.getResource(
+                    "view/ItemDialog.fxml"
+            ));
+            BorderPane dialog = loader.load();
+            dialog.setCenter(sp);
+            BorderPane.setMargin(sp, new Insets(15, 30, 15, 30));
+            Stage s = new Stage();
+            s.setTitle(title);
+            s.initModality(Modality.WINDOW_MODAL);
+            s.initOwner(primaryStage);
+            s.setScene(new Scene(dialog));
+            s.showAndWait();
+        }
+        catch(IOException e) {
+            System.err.println("Unable to load inventory display. Skipping.");
+            return;
         }
     }
     
@@ -266,11 +182,7 @@ public class Wanderer extends Application {
             displayGameOver();
         }
         else {
-            if (state.showShop){
-                displayShop();
-                tl.pause();
-            }
-            else { tl.play(); }
+            tl.play();
             viewer.refreshHUD();
             viewer.refreshMapview();
         }

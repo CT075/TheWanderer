@@ -23,7 +23,7 @@ public class LivingGameEntity extends GameEntity {
      
     // The inventory is the list of all of the items the LivingGameEntity is
     // carrying.
-    public ArrayList<Item> inventory;
+    public ArrayList<Integer> inventory;
     
     // Stores the previous location of the GameEntity. This is needed so that
     // movement can be reverted in cases of unit collision or wall collision.
@@ -36,7 +36,7 @@ public class LivingGameEntity extends GameEntity {
     public LivingGameEntity(int xLoc, int yLoc) {
         xLocation = xLoc;
         yLocation = yLoc;
-        inventory = new ArrayList<Item>();
+        inventory = new ArrayList<Integer>();
     }
     
     // ------- METHODS -------
@@ -110,7 +110,7 @@ public class LivingGameEntity extends GameEntity {
     }
 
     // Adds Item item to the LivingGameEntity's inventory.
-    public boolean addItem(Item item) {
+    public boolean addItem(int item) {
         inventory.add(item);
         return true;
     }
@@ -131,17 +131,7 @@ public class LivingGameEntity extends GameEntity {
     }
     
     // Updates the LivingGameEntity's stats based off of its equipped items.
-    public void update() {
-            int bonusAttack = 0;
-            int bonusDefense = 0;
-            for (int i = 0; i < inventory.size(); i++) {
-                if (inventory.get(i) == null) { continue; }
-                    bonusAttack += inventory.get(i).attackIncrease();
-                    bonusDefense += inventory.get(i).defenseIncrease();
-            }
-            setAttack(bonusAttack+baseAttack);
-            setDefense(bonusDefense+baseDefense);
-    }
+    public void update() { }
     
     // ------- STATIC METHODS -------
 
@@ -226,7 +216,7 @@ public class LivingGameEntity extends GameEntity {
         return attackRange;
     }
     
-    public ArrayList<Item> getInventory() {
+    public ArrayList<Integer> getInventory() {
         return inventory;
     }
     

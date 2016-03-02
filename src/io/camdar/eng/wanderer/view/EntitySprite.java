@@ -1,10 +1,6 @@
 package io.camdar.eng.wanderer.view;
 
 import javafx.scene.image.Image;
-import io.camdar.eng.wanderer.items.Badge;
-import io.camdar.eng.wanderer.items.CookieRecipe;
-import io.camdar.eng.wanderer.items.Lipstick;
-import io.camdar.eng.wanderer.items.Mascara;
 import io.camdar.eng.wanderer.model.unit.Enemy;
 import io.camdar.eng.wanderer.model.unit.GameEntity;
 import io.camdar.eng.wanderer.model.unit.ItemEntity;
@@ -44,21 +40,8 @@ public class EntitySprite extends Sprite {
         if (ge instanceof Player) { return PLAYER_SPRITE; }
         if (ge instanceof Enemy) { return ENEMY_SPRITE; }
         if (ge instanceof ItemEntity) {
-            ItemEntity ie= (ItemEntity) ge;
-            if (ie.getItem() instanceof CookieRecipe){
-                return RECIPE_SPRITE;
-            } 
-            if (ie.getItem() instanceof Mascara){
-                return MASCARA_SPRITE;
-            } 
-            if (ie.getItem() instanceof Lipstick){
-                return LIPSTICK_SPRITE;
-            } 
-            if (ie.getItem() instanceof Badge){
-                return BADGE_SPRITE;
-            }
             return ITEM_SPRITE; 
-            }
+        }
         return null;
     }
     

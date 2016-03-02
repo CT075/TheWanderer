@@ -2,14 +2,21 @@ package io.camdar.eng.wanderer.view;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseEvent;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.ListView;
+
 import io.camdar.eng.wanderer.Wanderer;
+import io.camdar.eng.wanderer.items.Item;
 import io.camdar.eng.wanderer.model.Game;
 import io.camdar.eng.wanderer.model.unit.GameEntity;
 import io.camdar.eng.wanderer.view.FloorViewBuilder;
@@ -33,27 +40,20 @@ public class GameViewer {
     
     // All of the FXML things
     @FXML
-    private Label hpLabel;
-    @FXML
-    private Label atkLabel;
-    @FXML
-    private Label defLabel;
-    @FXML
-    private Label cookieLabel;
-    @FXML
-    private Label floorLabel;
-    @FXML
     private ImageView mapView;
     @FXML
     private AnchorPane spriteView;
+    @FXML
+    private ListView<String> inventory;
     
     @FXML
-    public void displayMinimap() { runner.displayMinimap(this.mapView); }
-    @FXML
-    public void displayControls() { runner.displayControls(); }
-    @FXML
-    public void displayInventory() {
-        runner.displayInventory(owner.getInventory());
+    public void displayDescription(MouseEvent arg) {
+        String item = inventory.getSelectionModel().getSelectedItem();
+        if (item != null) {
+            int i = Integer.parseInt(item.split(" - ")[0]);
+            runner.displayItemDesc(Item.getDescription(i), Item.getName(i));
+        }
+        spriteView.requestFocus();
     }
     
     // Constructs the image "floorview" of the current floor, and attaches
@@ -112,13 +112,18 @@ public class GameViewer {
     
     // Make sure the HUD is always current with the model state.
     public void refreshHUD() {
-        hpLabel.setText(owner.formatPlayerHP());
-        atkLabel.setText(owner.formatPlayerAtk());
-        defLabel.setText(owner.formatPlayerDef());
-        cookieLabel.setText(owner.formatCookieCount());
-        // It's kind of abusing type coersion, but it looks cleaner than any
-        // alternative I could think of.
-        floorLabel.setText("" + this.displayedFloor);
+        inventory.setFocusTraversable(false);
+        // This is where java's supposed new "functional programming" stuff gets
+        // pretty nasty. This entire block of code is essentially map();
+        Stream<String> strings = owner.getInventory().stream().map(
+                i -> String.format("%d - %s", i, Item.getName(i))
+        );
+        // This is because JFX requires you to use their own janky list format
+        // to get listview to display them properly.
+        ObservableList<String> ol = FXCollections.observableList(
+                strings.collect(Collectors.toList())
+        );
+        inventory.setItems(ol);
     }
     
     public void setRunner(Wanderer r) {
